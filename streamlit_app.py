@@ -1,6 +1,5 @@
 import streamlit as st
 import requests
-from io import BytesIO
 
 # The URL of the FastAPI service
 API_URL = "https://escalyticsv6api.onrender.com/analyze"
@@ -56,8 +55,17 @@ if st.button("Analyze"):
             files = {"uploaded_file": uploaded_file}
 
         # Send the POST request to the FastAPI backend
-        response = requests.post(API_URL, json=request_payload, files=files)
+        headers = {"accept": "application/json"}
+        
+        # To handle both text and file upload together, you need to send JSON for text and a file in the multipart format
+        if uploaded_file:
+            # For the file upload, we need to use the multipart form data (which `requests` can handle automatically)
+            response = requests.post(API_URL, headers=headers, json=request_payload, files=files)
+        else:
+            # For the text case, just send the JSON payload
+            response = requests.post(API_URL, headers=headers, json=request_payload)
 
+        # Check if the response is successful
         if response.status_code == 200:
             analysis_results = response.json()
 
