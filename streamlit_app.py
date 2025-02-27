@@ -50,19 +50,21 @@ if st.button("Analyze"):
             "features": selected_features
         }
 
+        # Prepare the multipart/form-data request
         files = {}
         if uploaded_file:
             files = {"uploaded_file": uploaded_file}
 
         # Send the POST request to the FastAPI backend
         headers = {"accept": "application/json"}
-        
-        # To handle both text and file upload together, you need to send JSON for text and a file in the multipart format
+
+        # Use `requests.post` to send the request with JSON and file together
+        response = None
         if uploaded_file:
-            # For the file upload, we need to use the multipart form data (which `requests` can handle automatically)
-            response = requests.post(API_URL, headers=headers, json=request_payload, files=files)
+            # Use multipart form-data to handle both file and JSON data
+            response = requests.post(API_URL, headers=headers, data=request_payload, files=files)
         else:
-            # For the text case, just send the JSON payload
+            # Just send the JSON data if no file is uploaded
             response = requests.post(API_URL, headers=headers, json=request_payload)
 
         # Check if the response is successful
