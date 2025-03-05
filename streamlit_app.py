@@ -50,28 +50,21 @@ if st.button("Analyze"):
             "features": selected_features
         }
 
-        # Prepare the multipart/form-data request
         files = {}
         if uploaded_file:
             files = {"file": uploaded_file}
+        else:
+            files = None
 
-        # Send the POST request to the FastAPI backend
         headers = {"accept": "application/json"}
 
-        # Use `requests.post` to send the request with JSON and file together
-        response = None
         if uploaded_file:
-            # Use multipart form-data to handle both file and JSON data
             response = requests.post(f"{BASE_API_URL}/analyze_attachment", headers=headers, files=files)
         else:
-            # Just send the JSON data if no file is uploaded
             response = requests.post(f"{BASE_API_URL}/generate_insights", headers=headers, json=request_payload)
 
-        # Check if the response is successful
         if response.status_code == 200:
             analysis_results = response.json()
-
-            # Display the analysis results
             st.subheader("Analysis Results")
             if analysis_results.get("error"):
                 st.error(analysis_results["error"])
