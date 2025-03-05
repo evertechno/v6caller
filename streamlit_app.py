@@ -46,14 +46,14 @@ if st.button("Analyze"):
         # Prepare the request payload
         request_payload = {
             "email_content": email_content,
-            "selected_scenario": selected_scenario,
+            "scenario": selected_scenario,
             "features": selected_features
         }
 
         # Prepare the multipart/form-data request
         files = {}
         if uploaded_file:
-            files = {"uploaded_file": uploaded_file}
+            files = {"file": uploaded_file}
 
         # Send the POST request to the FastAPI backend
         headers = {"accept": "application/json"}
@@ -62,10 +62,10 @@ if st.button("Analyze"):
         response = None
         if uploaded_file:
             # Use multipart form-data to handle both file and JSON data
-            response = requests.post(API_URL, headers=headers, data=request_payload, files=files)
+            response = requests.post(f"{API_URL}/analyze_attachment", headers=headers, files=files)
         else:
             # Just send the JSON data if no file is uploaded
-            response = requests.post(API_URL, headers=headers, json=request_payload)
+            response = requests.post(f"{API_URL}/generate_insights", headers=headers, json=request_payload)
 
         # Check if the response is successful
         if response.status_code == 200:
