@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # The URL of the FastAPI service
-API_URL = "https://escalyticsv6api.onrender.com/analyze"
+BASE_API_URL = "https://escalyticsv6api.onrender.com"
 
 # Features to analyze, you can change this to suit your needs
 FEATURES = {
@@ -62,10 +62,10 @@ if st.button("Analyze"):
         response = None
         if uploaded_file:
             # Use multipart form-data to handle both file and JSON data
-            response = requests.post(f"{API_URL}/analyze_attachment", headers=headers, files=files)
+            response = requests.post(f"{BASE_API_URL}/analyze_attachment", headers=headers, files=files)
         else:
             # Just send the JSON data if no file is uploaded
-            response = requests.post(f"{API_URL}/generate_insights", headers=headers, json=request_payload)
+            response = requests.post(f"{BASE_API_URL}/generate_insights", headers=headers, json=request_payload)
 
         # Check if the response is successful
         if response.status_code == 200:
