@@ -1,69 +1,50 @@
-import streamlit as st
 import requests
 
-# API base URL
-API_BASE_URL = "https://escalyticsv7api.onrender.com"
+base_url = "https://escalyticsv7api.onrender.com"
 
-st.title("Email Analysis Application")
-
-# Function to analyze email
 def analyze_email(email_content, selected_scenario):
-    url = f"{API_BASE_URL}/analyze_email"
-    payload = {
+    endpoint = f"{base_url}/analyze_email"
+    data = {
         "email_content": email_content,
         "selected_scenario": selected_scenario
     }
-    headers = {"Content-Type": "application/json"}
-    response = requests.post(url, json=payload, headers=headers)
+    response = requests.post(endpoint, json=data)
     return response.json()
 
-# Function to analyze attachment
-def analyze_attachment(file):
-    url = f"{API_BASE_URL}/analyze_attachment"
-    files = {"file": file}
-    response = requests.post(url, files=files)
+def analyze_attachment(file_path):
+    endpoint = f"{base_url}/analyze_attachment"
+    files = {
+        'file': open(file_path, 'rb')
+    }
+    response = requests.post(endpoint, files=files)
     return response.json()
 
-# Function to analyze email attachment
-def analyze_email_attachment(file):
-    url = f"{API_BASE_URL}/analyze_email_attachment"
-    files = {"file": file}
-    response = requests.post(url, files=files)
+def analyze_email_attachment(file_path):
+    endpoint = f"{base_url}/analyze_email_attachment"
+    files = {
+        'file': open(file_path, 'rb')
+    }
+    response = requests.post(endpoint, files=files)
     return response.json()
 
-# Tab selection
-tab = st.sidebar.radio("Select Tab", ["Analyze Email", "Analyze Attachment", "Analyze Email Attachment"])
-
-if tab == "Analyze Email":
-    st.header("Analyze Email")
-    email_content = st.text_area("Email Content")
-    selected_scenario = st.text_input("Selected Scenario")
+# Example usage
+if __name__ == "__main__":
+    email_content = "Your email content here"
+    selected_scenario = "Your scenario here"
     
-    if st.button("Analyze Email"):
-        if email_content:
-            result = analyze_email(email_content, selected_scenario)
-            st.json(result)
-        else:
-            st.error("Please enter the email content.")
-
-elif tab == "Analyze Attachment":
-    st.header("Analyze Attachment")
-    uploaded_file = st.file_uploader("Choose a file", type=["txt", "pdf", "docx", "eml", "xlsx"])
+    # Call analyze_email endpoint
+    email_analysis_result = analyze_email(email_content, selected_scenario)
+    print("Email Analysis Result:")
+    print(email_analysis_result)
     
-    if st.button("Analyze Attachment"):
-        if uploaded_file:
-            result = analyze_attachment(uploaded_file)
-            st.json(result)
-        else:
-            st.error("Please upload a file.")
-
-elif tab == "Analyze Email Attachment":
-    st.header("Analyze Email Attachment")
-    uploaded_file = st.file_uploader("Choose an email file", type=["eml", "msg"])
+    # Call analyze_attachment endpoint
+    attachment_file_path = "path/to/your/attachment.txt"  # Update this path to your actual file
+    attachment_analysis_result = analyze_attachment(attachment_file_path)
+    print("Attachment Analysis Result:")
+    print(attachment_analysis_result)
     
-    if st.button("Analyze Email Attachment"):
-        if uploaded_file:
-            result = analyze_email_attachment(uploaded_file)
-            st.json(result)
-        else:
-            st.error("Please upload an email file.")
+    # Call analyze_email_attachment endpoint
+    email_attachment_file_path = "path/to/your/email_attachment.eml"  # Update this path to your actual file
+    email_attachment_analysis_result = analyze_email_attachment(email_attachment_file_path)
+    print("Email Attachment Analysis Result:")
+    print(email_attachment_analysis_result)
